@@ -1,311 +1,316 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analisador de Regras de Associação</title>
-    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
-    <style>
-        :root {
-            --primary: #4285f4;
-            --secondary: #34a853;
-            --tertiary: #ea4335;
-            --light: #f8f9fa;
-            --dark: #343a40;
-            --gray: #6c757d;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analisador de Regras de Associação</title>
+  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+  <style>
+    :root {
+      --primary: #4285f4;
+      --secondary: #34a853;
+      --tertiary: #ea4335;
+      --light: #f8f9fa;
+      --dark: #343a40;
+      --gray: #6c757d;
+    }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background: #f5f5f5;
-            color: #333;
-        }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f5f5f5;
+      color: #333;
+    }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
-        }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
 
-        h1 {
-            text-align: center;
-            color: var(--primary);
-        }
+    h1 {
+      text-align: center;
+      color: var(--primary);
+    }
 
-        .control-panel {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 30px;
-            background: var(--light);
-            padding: 20px;
-            border-radius: 8px;
-        }
+    .control-panel {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 30px;
+      background: var(--light);
+      padding: 20px;
+      border-radius: 8px;
+    }
 
-        .form-group {
-            flex: 1;
-            min-width: 200px;
-        }
+    .form-group {
+      flex: 1;
+      min-width: 200px;
+    }
 
-        label {
-            font-weight: bold;
-            margin-bottom: 5px;
-            display: block;
-        }
+    label {
+      font-weight: bold;
+      margin-bottom: 5px;
+      display: block;
+    }
 
-        select, input, button {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 16px;
-        }
+    select, input, button {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+    }
 
-        button {
-            background: var(--primary);
-            color: white;
-            cursor: pointer;
-        }
+    button {
+      background: var(--primary);
+      color: white;
+      cursor: pointer;
+    }
 
-        button:hover {
-            background: #3367d6;
-        }
+    button:hover {
+      background: #3367d6;
+    }
 
-        .metrics-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
+    .metrics-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
 
-        .metric-card {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
+    .metric-card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
 
-        .metric-header {
-            background: var(--primary);
-            color: white;
-            padding: 15px;
-            font-weight: bold;
-        }
+    .metric-header {
+      background: var(--primary);
+      color: white;
+      padding: 15px;
+      font-weight: bold;
+    }
 
-        .metric-body {
-            padding: 15px;
-            max-height: 500px;
-            overflow-y: auto;
-        }
+    .metric-body {
+      padding: 15px;
+      max-height: 500px;
+      overflow-y: auto;
+    }
 
-        .rule-item {
-            border-bottom: 1px solid #eee;
-            padding: 10px 0;
-        }
+    .rule-item {
+      border-bottom: 1px solid #eee;
+      padding: 10px 0;
+    }
 
-        .rule-relation {
-            font-weight: bold;
-            color: var(--dark);
-        }
+    .rule-relation {
+      font-weight: bold;
+      color: var(--dark);
+    }
 
-        .rule-metric {
-            font-size: 14px;
-            margin-top: 5px;
-        }
+    .rule-metric {
+      font-size: 14px;
+      margin-top: 5px;
+    }
 
-        .no-results {
-            text-align: center;
-            padding: 20px;
-            color: var(--gray);
-        }
-    </style>
+    .no-results {
+      text-align: center;
+      padding: 20px;
+      color: var(--gray);
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Analisador de Regras de Associação</h1>
+  <div class="container">
+    <h1>Analisador de Regras de Associação</h1>
 
-        <div class="control-panel">
-            <div class="form-group">
-                <label for="dataset-select">Selecione o Dataset</label>
-                <select id="dataset-select" onchange="loadDataset()">
-                    <option value="">-- Escolha um dataset --</option>
-                    <option value="regras_associacao_acidente.xlsx">Acidente</option>
-                    <option value="regras_associacao_incidente.xlsx">Incidente</option>
-                    <option value="regras_associacao_incidente_grave.xlsx">Incidente Grave</option>
-                    <option value="regras_associacao_todas_variaveis.xlsx">Todas Variáveis</option>
-                </select>
-            </div>
+    <div class="control-panel">
+      <div class="form-group">
+        <label for="dataset-select">Selecione o Dataset</label>
+        <select id="dataset-select" onchange="loadDataset()">
+          <option value="">-- Escolha um dataset --</option>
+          <option value="regras_associacao_acidente.xlsx">Acidente</option>
+          <option value="regras_associacao_incidente.xlsx">Incidente</option>
+          <option value="regras_associacao_incidente_grave.xlsx">Incidente Grave</option>
+          <option value="regras_associacao_todas_variaveis.xlsx">Todas Variáveis</option>
+        </select>
+      </div>
 
-            <div class="form-group">
-                <label for="search-input">Termos de Pesquisa (separados por vírgula)</label>
-                <input type="text" id="search-input" placeholder="Ex: subida, motor, decolagem">
-            </div>
+      <div class="form-group">
+        <label for="search-input">Termos de Pesquisa (separados por vírgula)</label>
+        <input type="text" id="search-input" placeholder="Ex: subida, motor, decolagem">
+      </div>
 
-            <div class="form-group" style="flex: 0.5;">
-                <button onclick="searchRules()">Pesquisar Regras</button>
-            </div>
+      <div class="form-group" style="flex: 0.5;">
+        <button onclick="searchRules()">Pesquisar Regras</button>
+      </div>
 
-            <div class="form-group" style="flex: 0.5;">
-                <button onclick="exportFilteredRules()">Exportar Resultado</button>
-            </div>
-        </div>
+      <div class="form-group" style="flex: 0.5;">
+        <button onclick="exportFilteredRules()">Exportar Resultado</button>
+      </div>
 
-        <div id="results-container" class="metrics-container">
-            <div class="no-results">
-                <p>Selecione um dataset e digite termos para pesquisar regras de associação.</p>
-            </div>
-        </div>
+      <div class="form-group" style="flex: 0.5;">
+        <button onclick="viewAllRules()">Ver Todas as Regras</button>
+      </div>
     </div>
 
-    <script>
-        let allRules = [];
-        let lastFilteredRules = [];
-        let currentDatasetName = "";
+    <div id="results-container" class="metrics-container">
+      <div class="no-results">
+        <p>Selecione um dataset e digite termos para pesquisar regras de associação.</p>
+      </div>
+    </div>
+  </div>
 
-        async function loadDataset() {
-            const select = document.getElementById('dataset-select');
-            const fileName = select.value;
+  <script>
+    let allRules = [];
+    let lastFilteredRules = [];
+    let currentDatasetName = "";
 
-            if (!fileName) {
-                allRules = [];
-                currentDatasetName = "";
-                document.getElementById('results-container').innerHTML = `
-                    <div class="no-results">
-                        <p>Selecione um dataset e digite termos para pesquisar regras de associação.</p>
-                    </div>
-                `;
-                return;
-            }
+    async function loadDataset() {
+      const select = document.getElementById('dataset-select');
+      const fileName = select.value;
 
-            try {
-                const response = await fetch(fileName);
-                if (!response.ok) throw new Error('Erro ao carregar arquivo');
+      if (!fileName) {
+        allRules = [];
+        currentDatasetName = "";
+        document.getElementById('results-container').innerHTML = `
+          <div class="no-results">
+            <p>Selecione um dataset e digite termos para pesquisar regras de associação.</p>
+          </div>`;
+        return;
+      }
 
-                const data = await response.arrayBuffer();
-                const workbook = XLSX.read(data);
-                const sheetName = workbook.SheetNames[0];
-                const worksheet = workbook.Sheets[sheetName];
+      try {
+        const response = await fetch(fileName);
+        if (!response.ok) throw new Error('Erro ao carregar arquivo');
+        const data = await response.arrayBuffer();
+        const workbook = XLSX.read(data);
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        allRules = XLSX.utils.sheet_to_json(worksheet);
+        currentDatasetName = fileName.replace('regras_associacao_', '').replace('.xlsx', '');
+      } catch (error) {
+        console.error('Erro:', error);
+        allRules = [];
+        currentDatasetName = "";
+      }
+    }
 
-                allRules = XLSX.utils.sheet_to_json(worksheet);
-                currentDatasetName = fileName.replace('regras_associacao_', '').replace('.xlsx', '');
-            } catch (error) {
-                console.error('Erro:', error);
-                allRules = [];
-                currentDatasetName = "";
-            }
+    function searchRules() {
+      const searchInput = document.getElementById('search-input').value.trim().toLowerCase();
+      const resultsContainer = document.getElementById('results-container');
+
+      if (allRules.length === 0) {
+        resultsContainer.innerHTML = `<div class="no-results"><p>Selecione um dataset primeiro.</p></div>`;
+        return;
+      }
+
+      if (!searchInput) {
+        resultsContainer.innerHTML = `<div class="no-results"><p>Digite termos para pesquisar.</p></div>`;
+        return;
+      }
+
+      const searchTerms = searchInput.split(',').map(term => term.trim());
+
+      const matchedRules = allRules.filter(rule => {
+        const antecedentsList = parseList(rule.antecedents || rule.Antecedentes);
+        const consequentsList = parseList(rule.consequents || rule.Consequentes);
+        const combinedText = [...antecedentsList, ...consequentsList].join(' ').toLowerCase();
+        return searchTerms.every(term => combinedText.includes(term));
+      });
+
+      lastFilteredRules = matchedRules.slice(0, 15);
+      displayResults(matchedRules, searchTerms);
+    }
+
+    function viewAllRules() {
+      const resultsContainer = document.getElementById('results-container');
+      if (allRules.length === 0) {
+        resultsContainer.innerHTML = `<div class="no-results"><p>Selecione um dataset primeiro.</p></div>`;
+        return;
+      }
+      lastFilteredRules = allRules.slice(0, 15);
+      displayResults(allRules, []);
+    }
+
+    function parseList(value) {
+      if (typeof value === 'string') {
+        try {
+          const parsed = JSON.parse(value.replace(/'/g, '"'));
+          if (Array.isArray(parsed)) {
+            return parsed.flatMap(item => item.split('_').map(word => word.toString()));
+          }
+        } catch (error) {
+          return value.split('_').map(word => word.toString());
         }
+      }
+      return [];
+    }
 
-        function searchRules() {
-            const searchInput = document.getElementById('search-input').value.trim().toLowerCase();
-            const resultsContainer = document.getElementById('results-container');
+    function displayResults(rules, searchTerms) {
+      const resultsContainer = document.getElementById('results-container');
+      if (rules.length === 0) {
+        resultsContainer.innerHTML = `<div class="no-results"><p>Nenhuma regra encontrada para: <strong>${searchTerms.join(', ')}</strong></p></div>`;
+        return;
+      }
 
-            if (allRules.length === 0) {
-                resultsContainer.innerHTML = `<div class="no-results"><p>Selecione um dataset primeiro.</p></div>`;
-                return;
-            }
+      const sortedLift = [...rules].sort((a, b) => (b.lift || b.Lift || 0) - (a.lift || a.Lift || 0));
+      const sortedConfidence = [...rules].sort((a, b) => (b.confidence || b.Confiança || 0) - (a.confidence || a.Confiança || 0));
+      const sortedSupport = [...rules].sort((a, b) => (b.support || b.Suporte || 0) - (a.support || a.Suporte || 0));
 
-            if (!searchInput) {
-                resultsContainer.innerHTML = `<div class="no-results"><p>Digite termos para pesquisar.</p></div>`;
-                return;
-            }
+      resultsContainer.innerHTML = `
+        <div class="metric-card">
+          <div class="metric-header">Melhores por Lift</div>
+          <div class="metric-body">${generateRulesHTML(sortedLift)}</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-header" style="background: var(--secondary);">Melhores por Confiança</div>
+          <div class="metric-body">${generateRulesHTML(sortedConfidence)}</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-header" style="background: var(--tertiary);">Melhores por Suporte</div>
+          <div class="metric-body">${generateRulesHTML(sortedSupport)}</div>
+        </div>
+      `;
+    }
 
-            const searchTerms = searchInput.split(',').map(term => term.trim());
+    function generateRulesHTML(rules) {
+      const displayRules = rules.slice(0, 15);
+      return displayRules.map(rule => `
+        <div class="rule-item">
+          <div class="rule-relation">${parseList(rule.antecedents || rule.Antecedentes).join(', ')} → ${parseList(rule.consequents || rule.Consequentes).join(', ')}</div>
+          <div class="rule-metric">Lift: ${(rule.lift || rule.Lift)?.toFixed(4) || 'N/A'}</div>
+          <div class="rule-metric">Confiança: ${(rule.confidence || rule.Confiança)?.toFixed(4) || 'N/A'}</div>
+          <div class="rule-metric">Suporte: ${(rule.support || rule.Suporte)?.toFixed(4) || 'N/A'}</div>
+        </div>`).join('');
+    }
 
-            const matchedRules = allRules.filter(rule => {
-                const antecedentsList = parseList(rule.antecedents || rule.Antecedentes);
-                const consequentsList = parseList(rule.consequents || rule.Consequentes);
+    function exportFilteredRules() {
+      if (lastFilteredRules.length === 0) {
+        alert('Nenhum resultado para exportar. Realize uma pesquisa primeiro.');
+        return;
+      }
 
-                const combinedText = [...antecedentsList, ...consequentsList].join(' ').toLowerCase();
-                return searchTerms.every(term => combinedText.includes(term));
-            });
+      const exportData = lastFilteredRules.map(rule => ({
+        "Antecedentes": parseList(rule.antecedents || rule.Antecedentes).join(', '),
+        "Consequentes": parseList(rule.consequents || rule.Consequentes).join(', '),
+        "Lift": rule.lift || rule.Lift,
+        "Confiança": rule.confidence || rule.Confiança,
+        "Suporte": rule.support || rule.Suporte
+      }));
 
-            lastFilteredRules = matchedRules.slice(0, 15);
+      const ws = XLSX.utils.json_to_sheet(exportData);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Regras Filtradas");
 
-            displayResults(matchedRules, searchTerms);
-        }
-
-        function parseList(value) {
-            if (typeof value === 'string') {
-                try {
-                    const parsed = JSON.parse(value.replace(/'/g, '"'));
-                    if (Array.isArray(parsed)) {
-                        return parsed.map(item => item.toString());
-                    }
-                } catch (error) {
-                    return [value];
-                }
-            }
-            return [];
-        }
-
-        function displayResults(rules, searchTerms) {
-            const resultsContainer = document.getElementById('results-container');
-
-            if (rules.length === 0) {
-                resultsContainer.innerHTML = `<div class="no-results"><p>Nenhuma regra encontrada para: <strong>${searchTerms.join(', ')}</strong></p></div>`;
-                return;
-            }
-
-            const sortedLift = [...rules].sort((a, b) => (b.lift || b.Lift || 0) - (a.lift || a.Lift || 0));
-            const sortedConfidence = [...rules].sort((a, b) => (b.confidence || b.Confiança || 0) - (a.confidence || a.Confiança || 0));
-            const sortedSupport = [...rules].sort((a, b) => (b.support || b.Suporte || 0) - (a.support || a.Suporte || 0));
-
-            resultsContainer.innerHTML = `
-                <div class="metric-card">
-                    <div class="metric-header">Melhores por Lift</div>
-                    <div class="metric-body">${generateRulesHTML(sortedLift)}</div>
-                </div>
-
-                <div class="metric-card">
-                    <div class="metric-header" style="background: var(--secondary);">Melhores por Confiança</div>
-                    <div class="metric-body">${generateRulesHTML(sortedConfidence)}</div>
-                </div>
-
-                <div class="metric-card">
-                    <div class="metric-header" style="background: var(--tertiary);">Melhores por Suporte</div>
-                    <div class="metric-body">${generateRulesHTML(sortedSupport)}</div>
-                </div>
-            `;
-        }
-
-        function generateRulesHTML(rules) {
-            const displayRules = rules.slice(0, 15);
-            return displayRules.map(rule => `
-                <div class="rule-item">
-                    <div class="rule-relation">${parseList(rule.antecedents || rule.Antecedentes).join(', ')} → ${parseList(rule.consequents || rule.Consequentes).join(', ')}</div>
-                    <div class="rule-metric">Lift: ${(rule.lift || rule.Lift)?.toFixed(4) || 'N/A'}</div>
-                    <div class="rule-metric">Confiança: ${(rule.confidence || rule.Confiança)?.toFixed(4) || 'N/A'}</div>
-                    <div class="rule-metric">Suporte: ${(rule.support || rule.Suporte)?.toFixed(4) || 'N/A'}</div>
-                </div>
-            `).join('');
-        }
-
-        function exportFilteredRules() {
-            if (lastFilteredRules.length === 0) {
-                alert('Nenhum resultado para exportar. Realize uma pesquisa primeiro.');
-                return;
-            }
-
-            const exportData = lastFilteredRules.map(rule => ({
-                "Antecedentes": parseList(rule.antecedents || rule.Antecedentes).join(', '),
-                "Consequentes": parseList(rule.consequents || rule.Consequentes).join(', '),
-                "Lift": rule.lift || rule.Lift,
-                "Confiança": rule.confidence || rule.Confiança,
-                "Suporte": rule.support || rule.Suporte
-            }));
-
-            const ws = XLSX.utils.json_to_sheet(exportData);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Regras Filtradas");
-
-            const filename = `regras_filtradas_${currentDatasetName || 'dataset'}.xlsx`;
-            XLSX.writeFile(wb, filename);
-        }
-    </script>
+      const filename = `regras_filtradas_${currentDatasetName || 'dataset'}.xlsx`;
+      XLSX.writeFile(wb, filename);
+    }
+  </script>
 </body>
 </html>
 
