@@ -142,7 +142,7 @@
 
             <div class="form-group">
                 <label for="search-input">Termos de Pesquisa (separados por vírgula)</label>
-                <input type="text" id="search-input" placeholder="Ex: decolagem, falha de motor">
+                <input type="text" id="search-input" placeholder="Ex: subida, motor, decolagem">
             </div>
 
             <div class="form-group" style="flex: 0.5;">
@@ -216,15 +216,30 @@
             const searchTerms = searchInput.split(',').map(term => term.trim());
 
             const matchedRules = allRules.filter(rule => {
-                const antecedents = (rule.Antecedentes || '').toLowerCase();
-                const consequents = (rule.Consequentes || '').toLowerCase();
-                const text = `${antecedents} ${consequents}`;
-                return searchTerms.every(term => text.includes(term));
+                const antecedentsList = parseList(rule.antecedents || rule.Antecedentes);
+                const consequentsList = parseList(rule.consequents || rule.Consequentes);
+
+                const combinedText = [...antecedentsList, ...consequentsList].join(' ').toLowerCase();
+                return searchTerms.every(term => combinedText.includes(term));
             });
 
-            lastFilteredRules = matchedRules.slice(0, 15); // apenas 15 melhores para exportar
+            lastFilteredRules = matchedRules.slice(0, 15);
 
             displayResults(matchedRules, searchTerms);
+        }
+
+        function parseList(value) {
+            if (typeof value === 'string') {
+                try {
+                    const parsed = JSON.parse(value.replace(/'/g, '"'));
+                    if (Array.isArray(parsed)) {
+                        return parsed.map(item => item.toString());
+                    }
+                } catch (error) {
+                    return [value];
+                }
+            }
+            return [];
         }
 
         function displayResults(rules, searchTerms) {
@@ -235,9 +250,9 @@
                 return;
             }
 
-            const sortedLift = [...rules].sort((a, b) => (b.Lift || 0) - (a.Lift || 0));
-            const sortedConfidence = [...rules].sort((a, b) => (b.Confiança || 0) - (a.Confiança || 0));
-            const sortedSupport = [...rules].sort((a, b) => (b.Suporte || 0) - (a.Suporte || 0));
+            const sortedLift = [...rules].sort((a, b) => (b.lift || b.Lift || 0) - (a.lift || a.Lift || 0));
+            const sortedConfidence = [...rules].sort((a, b) => (b.confidence || b.Confiança || 0) - (a.confidence || a.Confiança || 0));
+            const sortedSupport = [...rules].sort((a, b) => (b.support || b.Suporte || 0) - (a.support || a.Suporte || 0));
 
             resultsContainer.innerHTML = `
                 <div class="metric-card">
@@ -261,10 +276,10 @@
             const displayRules = rules.slice(0, 15);
             return displayRules.map(rule => `
                 <div class="rule-item">
-                    <div class="rule-relation">${rule.Antecedentes || 'N/A'} → ${rule.Consequentes || 'N/A'}</div>
-                    <div class="rule-metric">Lift: ${rule.Lift?.toFixed(4) || 'N/A'}</div>
-                    <div class="rule-metric">Confiança: ${rule.Confiança?.toFixed(4) || 'N/A'}</div>
-                    <div class="rule-metric">Suporte: ${rule.Suporte?.toFixed(4) || 'N/A'}</div>
+                    <div class="rule-relation">${parseList(rule.antecedents || rule.Antecedentes).join(', ')} → ${parseList(rule.consequents || rule.Consequentes).join(', ')}</div>
+                    <div class="rule-metric">Lift: ${(rule.lift || rule.Lift)?.toFixed(4) || 'N/A'}</div>
+                    <div class="rule-metric">Confiança: ${(rule.confidence || rule.Confiança)?.toFixed(4) || 'N/A'}</div>
+                    <div class="rule-metric">Suporte: ${(rule.support || rule.Suporte)?.toFixed(4) || 'N/A'}</div>
                 </div>
             `).join('');
         }
@@ -276,11 +291,11 @@
             }
 
             const exportData = lastFilteredRules.map(rule => ({
-                "Antecedentes": rule.Antecedentes,
-                "Consequentes": rule.Consequentes,
-                "Lift": rule.Lift,
-                "Confiança": rule.Confiança,
-                "Suporte": rule.Suporte
+                "Antecedentes": parseList(rule.antecedents || rule.Antecedentes).join(', '),
+                "Consequentes": parseList(rule.consequents || rule.Consequentes).join(', '),
+                "Lift": rule.lift || rule.Lift,
+                "Confiança": rule.confidence || rule.Confiança,
+                "Suporte": rule.support || rule.Suporte
             }));
 
             const ws = XLSX.utils.json_to_sheet(exportData);
@@ -293,3 +308,4 @@
     </script>
 </body>
 </html>
+
